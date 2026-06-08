@@ -1,9 +1,7 @@
 name: Build and Publish Docker Image
 
 on:
-
   push:
-
     branches:
       - main
 
@@ -18,11 +16,9 @@ env:
 jobs:
 
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-
       - name: Descargar Código
         uses: actions/checkout@v4
 
@@ -35,12 +31,18 @@ jobs:
 
       - name: Construir Imagen
         run: |
+          # COMENTARIO: Convertimos "Ajvera2000" a "ajvera2000" en minúsculas para evitar el error de Docker
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          
           docker build \
-          -t ghcr.io/${{ github.repository }}:${{ env.IMAGE_TAG }} \
-          -t ghcr.io/${{ github.repository }}:latest \
+          -t ghcr.io/${REPO_LOWER}:${{ env.IMAGE_TAG }} \
+          -t ghcr.io/${REPO_LOWER}:latest \
           .
 
       - name: Publicar Imagen
         run: |
-          docker push ghcr.io/${{ github.repository }}:${{ env.IMAGE_TAG }}
-          docker push ghcr.io/${{ github.repository }}:latest
+          # COMENTARIO: Usamos la misma variable corregida en minúsculas para subir el contenido con éxito
+          REPO_LOWER=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          
+          docker push ghcr.io/${REPO_LOWER}:${{ env.IMAGE_TAG }}
+          docker push ghcr.io/${REPO_LOWER}:latest
